@@ -15,7 +15,7 @@ class Client:
         self.token = token
         self.header["Authorization"] = "Bearer " + self.token
 
-    def make_request(self, method, endpoint, data=None, **kwargs):
+    def make_request(self, method, endpoint, data=None, json=None, **kwargs):
         """
             this method do the request petition, receive the different methods (post, delete, patch, get) that the api allow
             :param method:
@@ -24,41 +24,25 @@ class Client:
             :param kwargs:
             :return:
         """
-        data = kwargs.update()
-
-        # extra = {}
-        # if limit is not None and isinstance(limit, int):
-        #     extra['limit'] = str(limit)
-        # if order is not None and isinstance(order, str):
-        #     extra['order'] = order
-        # if offset is not None and isinstance(offset, str):
-        #     extra['offset'] = offset
-        # extra = '&'.join(['{0}={1}'.format(k, v) for k, v in extra.items()])
         url = '{0}{1}'.format(self.api_base_url, endpoint)
-        print("LA URL: " + url)
 
-        _data = None
-        if data is not None:
-            _data = json.dumps(data)
-        response = requests.request(method, url, headers=self.header, data=_data)
-        print(response.url)
-        print(response.request.method)
-        print(response.request.headers)
-        print(response.status_code)
-
+        if method == "get":
+            response = requests.request(method, url, headers=self.header, params=kwargs)
+        else:
+            response = requests.request(method, url, headers=self.header, data=data, json=json)
         return self.parse_response(response)
 
-    def _get(self, endpoint, data=None, **kwargs):
-        return self.make_request('get', endpoint, data=data, **kwargs)
+    def _get(self, endpoint, data=None, json=None, **kwargs):
+        return self.make_request('get', endpoint, data=data, json=json, **kwargs)
 
-    def _delete(self, endpoint, data=None, **kwargs):
-        return self.make_request('delete', endpoint, data=data, **kwargs)
+    def _post(self, endpoint, data=None, json=None, **kwargs):
+        return self.make_request('post', endpoint, data=data, json=json, **kwargs)
 
-    def _post(self, endpoint, data=None, **kwargs):
-        return self.make_request('post', endpoint, data=data, **kwargs)
+    def _delete(self, endpoint, data=None, json=None, **kwargs):
+        return self.make_request('delete', endpoint, data=data, json=json, **kwargs)
 
-    def _patch(self, endpoint, data=None, **kwargs):
-        return self.make_request('patch', endpoint, data=data, **kwargs)
+    def _patch(self, endpoint, data=None, json=None, **kwargs):
+        return self.make_request('patch', endpoint, data=data, json=json, **kwargs)
 
     def parse_response(self, response):
         """
@@ -86,6 +70,11 @@ class Client:
                     response.url, response.status_code, response.text))
         return response.json()
 
+    def oauth_access(self, client_id, callback):
+        url = "https://signin.infusionsoft.com/app/oauth/authorize?client_id={0}&redirect_uri={1}&response_type={2}".format(
+            client_id, callback, "code")
+        return url
+
     def refresh_token(self, client_id, client_secret, re_token):
         """
             to refresh the token you must to give client_id, client_secret and refresh token
@@ -101,6 +90,12 @@ class Client:
         response = requests.post(url, headers=header, data=args)
         return self.parse_response(response)
 
+    def get_contact_custom_fields(self, **kwargs):
+        # url = self.api_base_url + "{0}".format("contactCustomFields")
+        # response = requests.get(url, headers=self.header)
+        # return self.parse_response(response)
+        return self._get('contactCustomFields', **kwargs)
+
     def get_contacts(self, **kwargs):
         """
             To get all the contacts you can just call the method, to filter use limit, order, offset.
@@ -110,10 +105,9 @@ class Client:
             :param offset:
             :return:
         """
-        # url = self.api_base_url + "{0}".format("contacts")
-        # args = kwargs.update()
         return self._get('contacts', **kwargs)
-        # response = requests.get(url, headers=self.header, params=args)
+        # url = self.api_base_url + "{0}".format("contacts")
+        # response = requests.get(url, headers=self.header, params=kwargs)
         # return self.parse_response(response)
 
     def create_contact(self, email=None, phone_number=None, **kwargs):
@@ -124,7 +118,6 @@ class Client:
             :param kwargs:
             :return:
         """
-        url = self.api_base_url + "{0}".format("contacts")
         params = {}
         if email is None:
             if phone_number is None:
@@ -137,8 +130,7 @@ class Client:
             if phone_number is not None:
                 params["phone_numbers"] = [{"field": "PHONE1", "number": phone_number}]
         params.update(kwargs)
-        response = requests.post(url, headers=self.header, json=params)
-        return self.parse_response(response)
+        return self._post('contacts', json=params, **kwargs)
 
     def delete_contact(self, id):
         """
@@ -147,10 +139,8 @@ class Client:
             :return:
         """
         if id != "":
-            url = self.api_base_url + "{0}/{1}".format("contacts", id)
-            response = requests.delete(url, headers=self.header)
-            return self.parse_response(response)
-
+            endpoint = 'contacts/{0}'.format(id)
+            return self._delete(endpoint)
         else:
             raise Exception("El id es obligatorio")
 
@@ -162,17 +152,15 @@ class Client:
             :param kwargs:
             :return:
         """
+        params = {}
         if id != "":
-            params = {}
+            endpoint = 'contacts/{0}'.format(id)
             params.update(kwargs)
-            url = self.api_base_url + "{0}/{1}".format("contacts", id)
-            response = requests.patch(url, headers=self.header, json=params)
-            return self.parse_response(response)
-
+            return self._patch(endpoint, data=params)
         else:
             raise Exception("El id es obligatorio")
 
-    def get_campaigns(self, limit=50, offset=0):
+    def get_campaigns(self, **kwargs):
         """
             To get the campaigns just call the method or send options to filter
             For more options see the documentation of the API
@@ -180,10 +168,7 @@ class Client:
             :param offset:
             :return:
         """
-        url = self.api_base_url + "{0}".format("campaigns")
-        args = {"limit": limit, "offset": offset}
-        response = requests.get(url, headers=self.header, params=args)
-        return self.parse_response(response)
+        return self._get('campaigns', **kwargs)
 
     def retrieve_campaign(self, id, **kwargs):
         """
@@ -194,16 +179,12 @@ class Client:
             :return:
         """
         if id != "":
-            url = self.api_base_url + "{0}/{1}".format("campaigns", id)
-            params = {}
-            params.update(kwargs)
-            response = requests.get(url, headers=self.header, json=params)
-            return self.parse_response(response)
-
+            endpoint = 'campaigns/{0}'.format(id)
+            return self._get(endpoint, **kwargs)
         else:
             raise Exception("El id es obligatorio")
 
-    def get_emails(self, limit=50, offset=0, **kwargs):
+    def get_emails(self, **kwargs):
         """
             To get the emails just call the method, if you need filter options see the documentation of the API
             :param limit:
@@ -211,13 +192,9 @@ class Client:
             :param kwargs:
             :return:
         """
-        args = {"limit": limit, "offset": offset}
-        args.update(kwargs)
-        url = self.api_base_url + "{0}".format("emails")
-        response = requests.get(url, headers=self.header, params=args)
-        return self.parse_response(response)
+        return self._get('emails', **kwargs)
 
-    def get_opportunities(self, limit=50, order=None, offset=0, **kwargs):
+    def get_opportunities(self, **kwargs):
         """
             To get the opportunities you can just call the method, also you can filter, see the options in the documentation API
             :param limit:
@@ -226,27 +203,27 @@ class Client:
             :param kwargs:
             :return:
         """
-        args = {"limit": limit, "offset": offset}
-        if order is not None:
-            args["order"] = order
-        args.update(kwargs)
-        url = self.api_base_url + "{0}".format("opportunities")
-        response = requests.get(url, headers=self.header, params=args)
-        print(args)
-        print(response.text)
-        print(response.status_code)
-        return self.parse_response(response)
+        return self._get('opportunities', **kwargs)
 
-    def get_opportunities_pipeline(self):
+    def get_opportunities_pipeline(self, **kwargs):
         """
             This method will return a pipeline of opportunities
             :return:
         """
-        url = self.api_base_url + "{0}".format("opportunity/stage_pipeline")
-        response = requests.get(url, headers=self.header)
-        print(response.text)
-        print(response.status_code)
-        return self.parse_response(response)
+        return self._get('opportunity/stage_pipeline', **kwargs)
+
+    def retrieve_opportunity(self, id, **kwargs):
+        """
+            To retrieve a campaign is necessary the campaign id
+            For more options see the documentation of the API
+            :param id:
+            :return:
+        """
+        if id != "":
+            endpoint = 'opportunities/{0}'.format(id)
+            return self._get(endpoint, kwargs)
+        else:
+            raise Exception("El id es obligatorio")
 
     def create_opportunity(self, opportunity_title=None, contact=None, stage=None, **kwargs):
         """
@@ -258,23 +235,15 @@ class Client:
             :param kwargs:
             :return:
         """
-        url = self.api_base_url + "{0}".format("opportunities")
         params = {}
-
         if opportunity_title is None and contact is None and stage is None:
             raise Exception("Necesito un titulo, un contacto y un escenario.")
         else:
             params["opportunity_title"] = opportunity_title
             params["contact"] = [{"first_name": contact}]
             params["stage"] = [{"name": stage}]
-
         params.update(kwargs)
-        response = requests.post(url, headers=self.header, data=params)
-        print("CREACION DE OPORTUNIDAD !!!!")
-        print(response.status_code)
-        print(response.text)
-        print(params)
-        return self.parse_response(response)
+        return self._post('opportunities', data=params, **kwargs)
 
     def update_opportunity(self, id, **kwargs):
         """
@@ -283,84 +252,46 @@ class Client:
             :param kwargs:
             :return:
         """
+        params = {}
         if id != "":
-            params = {}
+            endpoint = 'opportunities/{0}'.format(id)
             params.update(kwargs)
-            url = self.api_base_url + "{0}/{1}".format("opportunities", id)
-            response = requests.patch(url, headers=self.header, json=params)
-            print("ACTUALIZACION DE OPORTUNIDAD!!!!")
-            print(params)
-            print(response.text)
-            print(response.status_code)
-
-            return self.parse_response(response)
-
+            return self._patch(endpoint, data=params)
         else:
             raise Exception("El id es obligatorio")
 
-    def retrieve_opportunity(self, id):
-        """
-            To retrieve a campaign is necessary the campaign id
-            For more options see the documentation of the API
-            :param id:
-            :return:
-        """
-        if id != "":
-            url = self.api_base_url + "{0}/{1}".format("opportunities", id)
-            response = requests.get(url, headers=self.header)
-            print("RETRIEVE DE OPORTUNIDAD!!!!")
-            print(response.text)
-            print(response.status_code)
+    def get_hook_events(self, **kwargs):
+        callback = "{0}/{1}".format("hooks", "event_keys")
+        return self._get(callback, **kwargs)
 
-            return self.parse_response(response)
-
-        else:
-            raise Exception("El id es obligatorio")
-
-    def get_hook_events(self):
-        url = self.api_base_url + "{0}/{1}".format("hooks", "event_keys")
-        response = requests.get(url, headers=self.header)
-
-        return self.parse_response(response)
-
-    def get_hook_subscriptions(self):
-        url = self.api_base_url + "{0}".format("hooks")
-        response = requests.get(url, headers=self.header)
-
-        return self.parse_response(response)
+    def get_hook_subscriptions(self, **kwargs):
+        return self._get('hooks', **kwargs)
 
     def verify_hook_subscription(self, id):
         if id != "":
-            url = self.api_base_url + "{0}/{1}/{2}".format("hooks", id, "verify")
-            response = requests.post(url, headers=self.header)
-
-            return self.parse_response(response)
+            callback = "{0}/{1}/{2}".format("hooks", id, "verify")
+            return self._post(callback, data=None)
         else:
             raise Exception("El id es obligatorio")
 
     def create_hook_subscription(self, event, callback):
-        url = self.api_base_url + "{0}".format("hooks")
-        args = {"eventKey": event, "hookUrl": callback}
-        response = requests.post(url, headers=self.header, json=args)
-
-        return self.parse_response(response)
-
-    def update_hook_subscription(self, id, event, callback):
-        if id != "":
-            url = self.api_base_url + "{0}/{1}".format("hooks", id)
+        if event is not None and callback is not None:
             args = {"eventKey": event, "hookUrl": callback}
-            response = requests.put(url, headers=self.header, data=args)
+            return self._post('hooks', data=args)
+        else:
+            raise Exception("El hook necesita un evento y una url")
 
-            return self.parse_response(response)
-
+    def update_hook_subscription(self, id, event, url):
+        if id != "":
+            callback = "{0}/{1}".format("hooks", id)
+            args = {"eventKey": event, "hookUrl": url}
+            return self._post(callback, data=args)
         else:
             raise Exception("El id es obligatorio")
 
     def delete_hook_subscription(self, id):
         if id != "":
-            url = self.api_base_url + "{0}/{1}".format("hooks", id)
-            response = requests.delete(url, headers=self.header)
-
-            return self.parse_response(response)
+            callback = "{0}/{1}".format("hooks", id)
+            return self._delete(callback)
         else:
             raise Exception("El id es obligatorio")

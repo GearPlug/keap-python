@@ -7,7 +7,7 @@ setup(name='infusionsoft-python',
       author='Yordy Gelvez',
       author_email='yordy.gelvez@gmail.com',
       license='GPL',
-      packages=['infusionsoft-python', ],
+      packages=['infusionsoft', ],
       install_requires=[
           'requests',
       ],
