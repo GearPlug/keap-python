@@ -75,7 +75,7 @@ class Client:
             client_id, callback, "code")
         return url
 
-    def refresh_token(self, client_id, client_secret, re_token):
+    def refresh_token(self, client_id, client_secret, refresh_token):
         """
             to refresh the token you must to give client_id, client_secret and refresh token
             :param client_id:
@@ -83,12 +83,15 @@ class Client:
             :param re_token:
             :return:
         """
-        url = "https://api.infusionsoft.com/token"
-        authorization = '{0}:{1}'.format(client_id, client_secret)
-        header = {'Authorization': 'Basic {0}'.format(b64encode(authorization.encode('UTF-8')).decode('UTF-8'))}
-        args = {'grant_type': 'refresh_token', 'refresh_token': re_token}
-        response = requests.post(url, headers=header, data=args)
-        return self.parse_response(response)
+        if client_id is not None and client_secret is not None and refresh_token is not None:
+            url = "https://api.infusionsoft.com/token"
+            authorization = '{0}:{1}'.format(client_id, client_secret)
+            header = {'Authorization': 'Basic {0}'.format(b64encode(authorization.encode('UTF-8')).decode('UTF-8'))}
+            args = {'grant_type': 'refresh_token', 'refresh_token': refresh_token}
+            response = requests.post(url, headers=header, data=args)
+            return self.parse_response(response)
+        else:
+            raise Exception("The attributes necessary to refresh the token were not obtained.")
 
     def get_contact_custom_fields(self, **kwargs):
         return self._get('contactCustomFields', **kwargs)
