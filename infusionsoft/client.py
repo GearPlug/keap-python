@@ -6,7 +6,6 @@ from base64 import b64encode
     Documentation of the API: https://developer.infusionsoft.com/docs/rest/
 """
 
-
 class Client:
     api_base_url = "https://api.infusionsoft.com/crm/rest/v1/"
     header = {"Accept": "application/json, */*", "content-type": "application/json"}
@@ -32,14 +31,14 @@ class Client:
             response = requests.request(method, url, headers=self.header, data=data, json=json)
         return self.parse_response(response)
 
-    def _get(self, endpoint, data=None, json=None, **kwargs):
-        return self.make_request('get', endpoint, data=data, json=json, **kwargs)
+    def _get(self, endpoint, data=None, **kwargs):
+        return self.make_request('get', endpoint, data=data, **kwargs)
 
     def _post(self, endpoint, data=None, json=None, **kwargs):
         return self.make_request('post', endpoint, data=data, json=json, **kwargs)
 
-    def _delete(self, endpoint, data=None, json=None, **kwargs):
-        return self.make_request('delete', endpoint, data=data, json=json, **kwargs)
+    def _delete(self, endpoint, **kwargs):
+        return self.make_request('delete', endpoint, **kwargs)
 
     def _patch(self, endpoint, data=None, json=None, **kwargs):
         return self.make_request('patch', endpoint, data=data, json=json, **kwargs)
@@ -91,9 +90,6 @@ class Client:
         return self.parse_response(response)
 
     def get_contact_custom_fields(self, **kwargs):
-        # url = self.api_base_url + "{0}".format("contactCustomFields")
-        # response = requests.get(url, headers=self.header)
-        # return self.parse_response(response)
         return self._get('contactCustomFields', **kwargs)
 
     def get_contacts(self, **kwargs):
@@ -106,9 +102,6 @@ class Client:
             :return:
         """
         return self._get('contacts', **kwargs)
-        # url = self.api_base_url + "{0}".format("contacts")
-        # response = requests.get(url, headers=self.header, params=kwargs)
-        # return self.parse_response(response)
 
     def create_contact(self, email=None, phone_number=None, **kwargs):
         """
@@ -156,7 +149,7 @@ class Client:
         if id != "":
             endpoint = 'contacts/{0}'.format(id)
             params.update(kwargs)
-            return self._patch(endpoint, data=params)
+            return self._patch(endpoint, json=params)
         else:
             raise Exception("El id es obligatorio")
 
@@ -225,7 +218,7 @@ class Client:
         else:
             raise Exception("El id es obligatorio")
 
-    def create_opportunity(self, opportunity_title=None, contact=None, stage=None, **kwargs):
+    def create_opportunity(self, **kwargs):
         """
             To create an opportunity is obligatory to send a title of the opportunity, the contact who have the opportunity, and stage
             For more information see the documentation of the API
@@ -236,14 +229,8 @@ class Client:
             :return:
         """
         params = {}
-        if opportunity_title is None and contact is None and stage is None:
-            raise Exception("Necesito un titulo, un contacto y un escenario.")
-        else:
-            params["opportunity_title"] = opportunity_title
-            params["contact"] = [{"first_name": contact}]
-            params["stage"] = [{"name": stage}]
         params.update(kwargs)
-        return self._post('opportunities', data=params, **kwargs)
+        return self._post('opportunities', json=params, **kwargs)
 
     def update_opportunity(self, id, **kwargs):
         """
@@ -256,7 +243,7 @@ class Client:
         if id != "":
             endpoint = 'opportunities/{0}'.format(id)
             params.update(kwargs)
-            return self._patch(endpoint, data=params)
+            return self._patch(endpoint, json=params)
         else:
             raise Exception("El id es obligatorio")
 
@@ -277,7 +264,7 @@ class Client:
     def create_hook_subscription(self, event, callback):
         if event is not None and callback is not None:
             args = {"eventKey": event, "hookUrl": callback}
-            return self._post('hooks', data=args)
+            return self._post('hooks', json=args)
         else:
             raise Exception("El hook necesita un evento y una url")
 
@@ -285,7 +272,7 @@ class Client:
         if id != "":
             callback = "{0}/{1}".format("hooks", id)
             args = {"eventKey": event, "hookUrl": url}
-            return self._post(callback, data=args)
+            return self._post(callback, json=args)
         else:
             raise Exception("El id es obligatorio")
 
