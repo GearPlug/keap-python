@@ -6,6 +6,7 @@ from base64 import b64encode
     Documentation of the API: https://developer.infusionsoft.com/docs/rest/
 """
 
+
 class Client:
     api_base_url = "https://api.infusionsoft.com/crm/rest/v1/"
     header = {"Accept": "application/json, */*", "content-type": "application/json"}

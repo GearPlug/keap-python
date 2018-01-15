@@ -4,12 +4,11 @@ from infusionsoft.client import Client
 MAIN INSTANCE
 here you instance the main class, obligatory send the access token
 """
-#client_id = "kbj7nhv3b7yezsrxck2cc749"
-#client_secret = "UMtN6PGPud"
-#refresh_token = "avg4rbjdftu832dv5gnbvgwf"
+# client_id = "kbj7nhv3b7yezsrxck2cc749"
+# client_secret = "UMtN6PGPud"
+# refresh_token = "avg4rbjdftu832dv5gnbvgwf"
 
-
-petition = Client("3jpyhrhu2r9ac6cw4uta7sf9")
+# petition = Client("3jpyhrhu2r9ac6cw4uta7sf9")
 
 """
 OAUTH URL
@@ -22,8 +21,8 @@ here you will get the url to do the oauth petition, you have to send the client 
 REFRESH TOKEN
 here you can refresh the token, are obligatory the client id, client secret and the refresh token
 """
-#refresh_token = petition.refresh_token("kbj7nhv3b7yezsrxck2cc749","UMtN6PGPud","bzy5ekf282q8cv9amzefcrdr")
-#print(refresh_token)
+# refresh_token = petition.refresh_token("kbj7nhv3b7yezsrxck2cc749","UMtN6PGPud","bzy5ekf282q8cv9amzefcrdr")
+# print(refresh_token)
 
 """
 CONTACT TEST
@@ -33,26 +32,26 @@ here you can list all the custom fields of the contacts
 # print(custom_fields)
 
 """ ***here you create a contact, you must to give a valid email or a phone number"""
-#create_contact = petition.create_contact('pepito_lo123lo@gmail.com', '123456789', given_name="Pepito", family_name="LolHernandez")
-#print(create_contact)
+# create_contact = petition.create_contact('pepito_lo123lo@gmail.com', '123456789', given_name="Pepito", family_name="LolHernandez")
+# print(create_contact)
 
 """ ***here you delete a contact, is obligatory the id of the contact"""
-#delete_contact = petition.delete_contact('YOURID')
-#print(delete_contact)
+# delete_contact = petition.delete_contact('YOURID')
+# print(delete_contact)
 
 """ 
     ***here you can update a contact, is obligatory the id of the contact to update
     To update just use this sintaxis: update_contact('YOURID', given_name="name", email_addresses=[{"email":"email@email.com","field":"EMAIL1"}]) 
 """
-#update_contact = petition.update_contact('34', given_name="Hernan", family_name="Herrera", email_addresses=[{"email":"hernan_herre@gmail.com","field":"EMAIL1"}])
-#print(update_contact)
+# update_contact = petition.update_contact('34', given_name="Hernan", family_name="Herrera", email_addresses=[{"email":"hernan_herre@gmail.com","field":"EMAIL1"}])
+# print(update_contact)
 
 """ 
     ***here you list the contacts, can receive limit, order, and offset.
     For filter specific camps use this sintaxis: get_contacts(field="name")
 """
-#list_contacts = petition.get_contacts()
-#print(list_contacts)
+# list_contacts = petition.get_contacts()
+# print(list_contacts)
 
 """
 CAMPAIGN TEST
@@ -76,12 +75,12 @@ here you can get all, or some emails, receive limit or offset
 OPPORTUNITIES TEST
 here you can list the opportunities, can receive limit, order, and offset
 """
-#list_opportunities = petition.get_opportunities()
-#print(list_opportunities)
+# list_opportunities = petition.get_opportunities()
+# print(list_opportunities)
 
 """ ***here you can list all the opportunities in pipeline, not receive anyshit"""
-#list_all_opportunities = petition.get_opportunities_pipeline()
-#print(list_all_opportunities)
+# list_all_opportunities = petition.get_opportunities_pipeline()
+# print(list_all_opportunities)
 
 """ ***here you can retrieve a specific opportunity, obligatory send the id"""
 # retrieve_opportunity = petition.retrieve_opportunity("")
@@ -104,14 +103,14 @@ here you can list the opportunities, can receive limit, order, and offset
         "name": "NAME",
     },
 """
-#create_opportunity = petition.create_opportunity()
-#print(create_opportunity)
+# create_opportunity = petition.create_opportunity()
+# print(create_opportunity)
 
 """ 
     ***here you can update an opportunity, obligatory send the id of the opportunity and the data to update as a json array
 """
-#update_opportunity = petition.update_opportunity(ID, opportunity_title="NAME")
-#print(update_opportunity)
+# update_opportunity = petition.update_opportunity(ID, opportunity_title="NAME")
+# print(update_opportunity)
 
 """
 HOOKS METHODS TEST
