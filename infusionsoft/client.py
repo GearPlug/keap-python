@@ -202,12 +202,12 @@ class Client:
         """
         return self._get('opportunities', **kwargs)
 
-    def get_opportunities_pipeline(self, **kwargs):
+    def get_opportunities_pipeline(self):
         """
             This method will return a pipeline of opportunities
             :return:
         """
-        return self._get('opportunity/stage_pipeline', **kwargs)
+        return self._get('opportunity/stage_pipeline')
 
     def retrieve_opportunity(self, id, **kwargs):
         """
@@ -251,9 +251,9 @@ class Client:
         else:
             raise Exception("El id es obligatorio")
 
-    def get_hook_events(self, **kwargs):
+    def get_hook_events(self):
         callback = "{0}/{1}".format("hooks", "event_keys")
-        return self._get(callback, **kwargs)
+        return self._get(callback)
 
     def get_hook_subscriptions(self, **kwargs):
         return self._get('hooks', **kwargs)

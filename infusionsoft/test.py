@@ -32,7 +32,7 @@ here you can list all the custom fields of the contacts
 # print(custom_fields)
 
 """ ***here you create a contact, you must to give a valid email or a phone number"""
-# create_contact = petition.create_contact('pepito_lo123lo@gmail.com', '123456789', given_name="Pepito", family_name="LolHernandez")
+# create_contact = petition.create_contact('anotherTEST@gmail.com', '987654321', given_name="Another", family_name="Test")
 # print(create_contact)
 
 """ ***here you delete a contact, is obligatory the id of the contact"""
@@ -50,7 +50,7 @@ here you can list all the custom fields of the contacts
     ***here you list the contacts, can receive limit, order, and offset.
     For filter specific camps use this sintaxis: get_contacts(field="name")
 """
-# list_contacts = petition.get_contacts()
+# list_contacts = petition.get_contacts(order="id", order_direction="descending", limit=1)
 # print(list_contacts)
 
 """
@@ -124,11 +124,11 @@ here you can list the hooks events, just call the method
 # print(get_hook_subscriptions)
 
 """ ***here you can verify a hook subscription"""
-# verify_hook = petition.verify_hook_subscription("34")
+# verify_hook = petition.verify_hook_subscription("74")
 # print(verify_hook)
 
 """ ***here you can create a hook subscription, send the hook event and the url callback"""
-# create_hook = petition.create_hook_subscription("contact.delete", "http://4b6be146.ngrok.io/api/callback")
+# create_hook = petition.create_hook_subscription("contact.add", "http://23bc0c82.ngrok.io/api/callback")
 # print(create_hook)
 
 """ ***here you can update a hook, send the hook id, event and url"""
