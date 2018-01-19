@@ -93,8 +93,8 @@ class Client:
         else:
             raise Exception("The attributes necessary to refresh the token were not obtained.")
 
-    def get_contact_custom_fields(self, **kwargs):
-        return self._get('contactCustomFields', **kwargs)
+    def get_contact_custom_fields(self):
+        return self._get('contactCustomFields')
 
     def get_contacts(self, **kwargs):
         """
@@ -118,7 +118,8 @@ class Client:
         if kwargs is not None:
             params = {}
             params.update(kwargs)
-        return self._post('contacts', json=params)
+            return self._post('contacts', json=params)
+        raise Exception("To create a contact is necessary a valid name and email")
 
     def delete_contact(self, id):
         """
@@ -146,7 +147,7 @@ class Client:
             params.update(kwargs)
             return self._patch(endpoint, json=params)
         else:
-            raise Exception("El id es obligatorio")
+            raise Exception("The id is obligatory")
 
     def get_campaigns(self, **kwargs):
         """
@@ -193,12 +194,12 @@ class Client:
         """
         return self._get('opportunities', **kwargs)
 
-    def get_opportunities_pipeline(self, **kwargs):
+    def get_opportunities_pipeline(self):
         """
             This method will return a pipeline of opportunities
             :return:
         """
-        return self._get('opportunity/stage_pipeline', **kwargs)
+        return self._get('opportunity/stage_pipeline')
 
     def retrieve_opportunity(self, id, **kwargs):
         """
@@ -242,12 +243,12 @@ class Client:
         else:
             raise Exception("El id es obligatorio")
 
-    def get_hook_events(self, **kwargs):
+    def get_hook_events(self):
         callback = "{0}/{1}".format("hooks", "event_keys")
-        return self._get(callback, **kwargs)
+        return self._get(callback)
 
-    def get_hook_subscriptions(self, **kwargs):
-        return self._get('hooks', **kwargs)
+    def get_hook_subscriptions(self):
+        return self._get('hooks')
 
     def verify_hook_subscription(self, id):
         if id != "":

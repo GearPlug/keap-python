@@ -4,11 +4,12 @@ from infusionsoft.client import Client
 MAIN INSTANCE
 here you instance the main class, obligatory send the access token
 """
-# client_id = "kbj7nhv3b7yezsrxck2cc749"
-# client_secret = "UMtN6PGPud"
-# refresh_token = "ednjex5s8e978t3v4pze4rdx"
-
-petition = Client("99gthcqsgx8ukpnsk8dg5d8q")
+# client_id = ""
+# client_secret = ""
+# access_token = ""
+# refresh_token = ""
+# callback = ""
+# petition = Client(access_token)
 
 """
 OAUTH URL
@@ -21,7 +22,7 @@ here you will get the url to do the oauth petition, you have to send the client 
 REFRESH TOKEN
 here you can refresh the token, are obligatory the client id, client secret and the refresh token
 """
-# refresh_token = petition.refresh_token("kbj7nhv3b7yezsrxck2cc749","UMtN6PGPud","jxefk9px6zq98qdatkyydhe5")
+# refresh_token = petition.refresh_token("client_id","client_secret","refresh_token")
 # print(refresh_token)
 
 """
