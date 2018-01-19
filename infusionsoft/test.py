@@ -6,9 +6,9 @@ here you instance the main class, obligatory send the access token
 """
 # client_id = "kbj7nhv3b7yezsrxck2cc749"
 # client_secret = "UMtN6PGPud"
-# refresh_token = "avg4rbjdftu832dv5gnbvgwf"
+# refresh_token = "ednjex5s8e978t3v4pze4rdx"
 
-# petition = Client("3jpyhrhu2r9ac6cw4uta7sf9")
+petition = Client("99gthcqsgx8ukpnsk8dg5d8q")
 
 """
 OAUTH URL
@@ -21,7 +21,7 @@ here you will get the url to do the oauth petition, you have to send the client 
 REFRESH TOKEN
 here you can refresh the token, are obligatory the client id, client secret and the refresh token
 """
-# refresh_token = petition.refresh_token("kbj7nhv3b7yezsrxck2cc749","UMtN6PGPud","bzy5ekf282q8cv9amzefcrdr")
+# refresh_token = petition.refresh_token("kbj7nhv3b7yezsrxck2cc749","UMtN6PGPud","jxefk9px6zq98qdatkyydhe5")
 # print(refresh_token)
 
 """
@@ -31,8 +31,11 @@ here you can list all the custom fields of the contacts
 # custom_fields = petition.get_contact_custom_fields()
 # print(custom_fields)
 
-""" ***here you create a contact, you must to give a valid email or a phone number"""
-# create_contact = petition.create_contact('anotherTEST@gmail.com', '987654321', given_name="Another", family_name="Test")
+""" 
+    ***here you create a contact, you must to give a valid email or a phone number and that is send as a kwarg
+    data = {'email_addresses': [{'email': 'EMAIL@EMAIL.com', 'field': 'EMAIL1'}], 'given_name': 'NAME'}
+"""
+# create_contact = petition.create_contact(**data)
 # print(create_contact)
 
 """ ***here you delete a contact, is obligatory the id of the contact"""
@@ -50,7 +53,7 @@ here you can list all the custom fields of the contacts
     ***here you list the contacts, can receive limit, order, and offset.
     For filter specific camps use this sintaxis: get_contacts(field="name")
 """
-# list_contacts = petition.get_contacts(order="id", order_direction="descending", limit=1)
+# list_contacts = petition.get_contacts(order="id", order_direction="descending")
 # print(list_contacts)
 
 """
@@ -78,7 +81,7 @@ here you can list the opportunities, can receive limit, order, and offset
 # list_opportunities = petition.get_opportunities()
 # print(list_opportunities)
 
-""" ***here you can list all the opportunities in pipeline, not receive anyshit"""
+""" ***here you can list all t3jpyhrhu2r9ac6cw4uta7sf9he opportunities in pipeline, not receive anyshit"""
 # list_all_opportunities = petition.get_opportunities_pipeline()
 # print(list_all_opportunities)
 
@@ -119,16 +122,13 @@ here you can list the hooks events, just call the method
 # get_hook_events = petition.get_hook_events()
 # print(get_hook_events)
 
-""" ***here you can get all the hook subscriptions, just call the method"""
-# get_hook_subscriptions = petition.get_hook_subscriptions()
-# print(get_hook_subscriptions)
 
 """ ***here you can verify a hook subscription"""
 # verify_hook = petition.verify_hook_subscription("74")
 # print(verify_hook)
 
 """ ***here you can create a hook subscription, send the hook event and the url callback"""
-# create_hook = petition.create_hook_subscription("contact.add", "http://23bc0c82.ngrok.io/api/callback")
+# create_hook = petition.create_hook_subscription("opportunity.add", "http://23bc0c82.ngrok.io/api/callback")
 # print(create_hook)
 
 """ ***here you can update a hook, send the hook id, event and url"""
@@ -136,5 +136,9 @@ here you can list the hooks events, just call the method
 # print(update_hook)
 
 """ ***here you can delete a hook subscription, is obligatory to send the hook id"""
-# delete_hook = petition.delete_hook_subscription("30")
+# delete_hook = petition.delete_hook_subscription(120)
 # print(delete_hook)
+
+""" ***here you can get all the hook subscriptions, just call the method"""
+# get_hook_subscriptions = petition.get_hook_subscriptions()
+# print(get_hook_subscriptions)

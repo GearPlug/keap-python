@@ -107,7 +107,7 @@ class Client:
         """
         return self._get('contacts', **kwargs)
 
-    def create_contact(self, email=None, phone_number=None, **kwargs):
+    def create_contact(self, **kwargs):
         """
             For create a contact is obligatory to fill the email or the phone number, I also recommend to fill the given_name="YOUR NAME"
             :param email:
@@ -115,19 +115,10 @@ class Client:
             :param kwargs:
             :return:
         """
-        params = {}
-        if email is None:
-            if phone_number is None:
-                raise Exception("Necesito un telefono o un correo.")
-            else:
-                params["phone_numbers"] = [{"field": "PHONE1", "number": phone_number}]
-        else:
-            params["email_addresses"] = [{"email": email, "field": "EMAIL1"}]
-
-            if phone_number is not None:
-                params["phone_numbers"] = [{"field": "PHONE1", "number": phone_number}]
-        params.update(kwargs)
-        return self._post('contacts', json=params, **kwargs)
+        if kwargs is not None:
+            params = {}
+            params.update(kwargs)
+        return self._post('contacts', json=params)
 
     def delete_contact(self, id):
         """
@@ -202,12 +193,12 @@ class Client:
         """
         return self._get('opportunities', **kwargs)
 
-    def get_opportunities_pipeline(self):
+    def get_opportunities_pipeline(self, **kwargs):
         """
             This method will return a pipeline of opportunities
             :return:
         """
-        return self._get('opportunity/stage_pipeline')
+        return self._get('opportunity/stage_pipeline', **kwargs)
 
     def retrieve_opportunity(self, id, **kwargs):
         """
@@ -251,9 +242,9 @@ class Client:
         else:
             raise Exception("El id es obligatorio")
 
-    def get_hook_events(self):
+    def get_hook_events(self, **kwargs):
         callback = "{0}/{1}".format("hooks", "event_keys")
-        return self._get(callback)
+        return self._get(callback, **kwargs)
 
     def get_hook_subscriptions(self, **kwargs):
         return self._get('hooks', **kwargs)
