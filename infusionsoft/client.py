@@ -303,6 +303,17 @@ class Client:
         else:
             raise Exception("The id is necessary")
 
+    def get_orders(self, **kwargs):
+        return self._get('orders', **kwargs)
+
+    def retrieve_order(self, id):
+        if id != "":
+            endpoint = "tasks/{0}".format(id)
+            return self._get(endpoint)
+        else:
+            raise Exception("The id is necessary")
+
+
     def get_hook_events(self):
         callback = "{0}/{1}".format("hooks", "event_keys")
         return self._get(callback)

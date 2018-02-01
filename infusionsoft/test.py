@@ -137,6 +137,14 @@ here you can list the tasks
 # get_tasks = petition.get_tasks()
 # print(get_tasks)
 
+
+"""
+ORDER METHOD TEST
+here you can list the order
+"""
+# get_orders = petition.get_orders()
+# print(get_orders)
+
 """
 HOOKS METHODS TEST
 here you can list the hooks events, just call the method
