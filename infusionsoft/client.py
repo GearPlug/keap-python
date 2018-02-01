@@ -44,6 +44,9 @@ class Client:
     def _patch(self, endpoint, data=None, json=None, **kwargs):
         return self.make_request('patch', endpoint, data=data, json=json, **kwargs)
 
+    def _put(self, endpoint, json=None, **kwargs):
+        return self.make_request('put', endpoint, json=json, **kwargs)
+
     def parse_response(self, response):
         """
             This method get the response request and returns json data or raise exceptions
@@ -106,6 +109,13 @@ class Client:
             :return:
         """
         return self._get('contacts', **kwargs)
+
+    def retrieve_contact(self, id, **kwargs):
+        if id != "":
+            endpoint = 'contacts/{0}'.format(id)
+            return self._get(endpoint, **kwargs)
+        else:
+            raise Exception("El id es obligatorio")
 
     def create_contact(self, **kwargs):
         """
@@ -242,6 +252,56 @@ class Client:
             return self._patch(endpoint, json=params)
         else:
             raise Exception("El id es obligatorio")
+
+    def get_products(self, **kwargs):
+        return self._get('/products/search', **kwargs)
+
+    def retrieve_product(self, id):
+        if id != "":
+            endpoint = "products/{0}".format(id)
+            return self._get(endpoint)
+        else:
+            raise Exception("The id is necessary")
+
+    def get_tasks(self, **kwargs):
+        return self._get('tasks', **kwargs)
+
+    def create_task(self, **kwargs):
+        if kwargs is not None:
+            params = {}
+            params.update(kwargs)
+            return self._post('tasks', json=params)
+        raise Exception("To create a task is necessary a title and a due_date")
+
+    def delete_task(self, id):
+        if id != "":
+            endpoint = 'tasks/{0}'.format(id)
+            return self._delete(endpoint)
+        else:
+            raise Exception("The ID is necessary")
+
+    def update_task(self, id, **kwargs):
+        params = {}
+        if id != "":
+            endpoint = 'tasks/{0}'.format(id)
+            params.update(kwargs)
+            return self._patch(endpoint, json=params)
+        else:
+            raise Exception("The id is obligatory")
+
+    def retrieve_task(self, id):
+        if id != "":
+            endpoint = "tasks/{0}".format(id)
+            return self._get(endpoint)
+        else:
+            raise Exception("The id is necessary")
+
+    def replace_task(self, id, **kwargs):
+        if id != "":
+            endpoint = "tasks/{0}".format(id)
+            return self._put(endpoint, **kwargs)
+        else:
+            raise Exception("The id is necessary")
 
     def get_hook_events(self):
         callback = "{0}/{1}".format("hooks", "event_keys")
