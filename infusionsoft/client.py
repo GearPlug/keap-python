@@ -234,9 +234,10 @@ class Client:
             :param kwargs:
             :return:
         """
-        params = {}
-        params.update(kwargs)
-        return self._post('opportunities', json=params, **kwargs)
+        if kwargs is not None:
+            params = {}
+            params.update(kwargs)
+            return self._post('opportunities', json=params)
 
     def update_opportunity(self, id, **kwargs):
         """
@@ -312,7 +313,6 @@ class Client:
             return self._get(endpoint)
         else:
             raise Exception("The id is necessary")
-
 
     def get_hook_events(self):
         callback = "{0}/{1}".format("hooks", "event_keys")
