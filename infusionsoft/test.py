@@ -3,13 +3,14 @@ from infusionsoft.client import Client
 """
 MAIN INSTANCE
 here you instance the main class, obligatory send the access token
+this library works for the Infusionsoft REST API version 1
 """
-client_id = "kbj7nhv3b7yezsrxck2cc749"
-client_secret = "UMtN6PGPud"
-access_token = "87dyzmcukud8cb327mzm4xcw"
-refresh_token = "m5cwmajgqxh6mv26bd47u2gz"
-callback = ""
-petition = Client(access_token)
+# client_id = "kbj7nhv3b7yezsrxck2cc749"
+# client_secret = "UMtN6PGPud"
+# access_token = "p2de6mybxsbgs3xu393r7teh"
+# refresh_token = "v4vvdcuqk7ddwajucjsfk7ra"
+# callback = ""
+# petition = Client(access_token)
 
 """
 OAUTH URL
@@ -24,6 +25,39 @@ here you can refresh the token, are obligatory the client id, client secret and 
 """
 # refresh_token = petition.refresh_token(client_id, client_secret, refresh_token)
 # print(refresh_token)
+
+"""
+GET DATA
+call the method get_data and send "endpoint"
+Endpoint Examples: "contacts", "contactCustomFields", "campaigns", "opportunities", "products/search", "tasks", "orders", "hooks/event_keys", "hooks"
+"""
+# data = petition.get_data("opportunities")
+# print(data)
+
+"""
+CREATE DATA
+call the method create_data and send "endpoint" and the data
+Example: 
+    data = {'email_addresses': [{'email': 'EMAIL@EMAIL.com', 'field': 'EMAIL1'}], 'given_name': 'NAME'}
+    endpoint = "contacts"
+    data = petition.create_data(endpoint, **data)
+"""
+
+"""
+UPDATE DATA
+call the method update_data and send "endpoint", the id of the thing to update, and the data to update
+Example:
+    data = {'email_addresses': [{'email': 'CHANGEEMAIL@EMAIL.com', 'field': 'EMAIL1'}], 'given_name': 'CHANGENAME'}
+    endpoint = "contacts"
+    data = petition.update_data(endpoint, 100, **data)
+"""
+
+"""
+DELETE DATA
+just call the method delete_data, send "endpoint" and the id of the thing to delete
+Example:
+    data = petition.delete_data(endpoint, 100)
+"""
 
 """
 CONTACT TEST
@@ -98,22 +132,23 @@ here you can list the opportunities, can receive limit, order, and offset
 
 """ 
     ***here you can create an opportunity, obligatory opportunity_title, contact, and stage as a json array
-    "opportunity_title": "YOURTITLE",
-    "contact": {
-        "company_name": "COMPANYNAME",
-        "email": "COMPANY@EMAIL.COM",
-        "first_name": "NAME",
-        "id": ID,
-        "job_title": "JOBNAME",
-        "last_name": "LASTNAME",
-        "phone_number": "PHONENUMBER"
-    },
-    "stage": {
-        "id": ID,
-        "name": "NAME",
-    },
+    data = {
+        'contact': {
+            'id': '170'
+        },
+        'stage': {
+            'name': 'stage de prueba',
+            'id': 66,
+            'details': {
+                'check_list_items': [
+                    {'description': 'Esta es una oportunidad de prueba'}
+                ]
+            }
+        },
+        'opportunity_title': 'TestOpportunity4'
+    }
 """
-# create_opportunity = petition.create_opportunity()
+# create_opportunity = petition.create_opportunity(**data)
 # print(create_opportunity)
 
 """ 
@@ -134,6 +169,13 @@ here you can list the products
 TASK METHOD TEST
 here you can list the tasks
 """
+# data = {'title': 'TASK DE TEST2', "contact": {"id": 170}}
+# create_task = petition.create_task(**data)
+# print(create_task)
+
+# delete_task = petition.delete_task(6)
+# print(delete_task)
+
 # get_tasks = petition.get_tasks()
 # print(get_tasks)
 

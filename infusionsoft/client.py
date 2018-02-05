@@ -96,6 +96,27 @@ class Client:
         else:
             raise Exception("The attributes necessary to refresh the token were not obtained.")
 
+    def get_data(self, endpoint, **kwargs):
+        return self._get(endpoint, **kwargs)
+
+    def create_data(self, endpoint, **kwargs):
+        if kwargs is not None:
+            params = {}
+            params.update(kwargs)
+            return self._post(endpoint, json=params)
+
+    def update_data(self, endpoint, data_id, **kwargs):
+        params = {}
+        if data_id != "":
+            url = '{0}/{1}'.format(endpoint, data_id)
+            params.update(kwargs)
+            return self._patch(url, json=params)
+
+    def delete_data(self, endpoint, data_id):
+        if data_id != "":
+            url = '{0}/{1}'.format(endpoint, data_id)
+            return self._delete(url)
+
     def get_contact_custom_fields(self):
         return self._get('contactCustomFields')
 
@@ -255,7 +276,7 @@ class Client:
             raise Exception("El id es obligatorio")
 
     def get_products(self, **kwargs):
-        return self._get('/products/search', **kwargs)
+        return self._get('products/search', **kwargs)
 
     def retrieve_product(self, id):
         if id != "":
