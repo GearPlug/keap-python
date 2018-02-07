@@ -1,16 +1,17 @@
 from infusionsoft.client import Client
+import json
 
 """
 MAIN INSTANCE
 here you instance the main class, obligatory send the access token
 this library works for the Infusionsoft REST API version 1
 """
-# client_id = "kbj7nhv3b7yezsrxck2cc749"
-# client_secret = "UMtN6PGPud"
-# access_token = "p2de6mybxsbgs3xu393r7teh"
-# refresh_token = "v4vvdcuqk7ddwajucjsfk7ra"
-# callback = ""
-# petition = Client(access_token)
+client_id = ""
+client_secret = ""
+access_token = ""
+refresh_token = ""
+callback = ""
+petition = Client(access_token)
 
 """
 OAUTH URL
@@ -31,7 +32,7 @@ GET DATA
 call the method get_data and send "endpoint"
 Endpoint Examples: "contacts", "contactCustomFields", "campaigns", "opportunities", "products/search", "tasks", "orders", "hooks/event_keys", "hooks"
 """
-# data = petition.get_data("opportunities")
+# data = petition.get_data('contacts', order="id", order_direction="descending", limit=1)
 # print(data)
 
 """
