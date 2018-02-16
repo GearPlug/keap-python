@@ -38,7 +38,7 @@ token = client.set_token('TOKEN')
 
 ## Tests
 ```
-python test.py
+infusionsoft/test.py
 ```
 
 ## TODO Endpoints
