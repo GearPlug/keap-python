@@ -11,20 +11,20 @@ client_secret = ""
 access_token = ""
 refresh_token = ""
 callback = ""
-petition = Client(access_token)
+petition = Client(client_id, client_secret, access_token)
 
 """
 OAUTH URL
 here you will get the url to do the oauth petition, you have to send the client id and the callback url
 """
-# oauth = petition.oauth_access("client_id", "callback")
+# oauth = petition.oauth_access("callback")
 # print(oauth)
 
 """
 REFRESH TOKEN
 here you can refresh the token, are obligatory the client id, client secret and the refresh token
 """
-# refresh_token = petition.refresh_token(client_id, client_secret, refresh_token)
+# refresh_token = petition.refresh_token(refresh_token)
 # print(refresh_token)
 
 """
