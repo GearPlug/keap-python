@@ -11,9 +11,10 @@ class Client:
     api_base_url = "https://api.infusionsoft.com/crm/rest/v1/"
     header = {"Accept": "application/json, */*", "content-type": "application/json"}
 
-    def __init__(self, token):
+    def __init__(self, client_id, client_secret, token=None):
+        self.client_id = client_id
+        self.client_secret = client_secret
         self.token = token
-        self.header["Authorization"] = "Bearer " + self.token
 
     def make_request(self, method, endpoint, data=None, json=None, **kwargs):
         """
@@ -24,13 +25,17 @@ class Client:
             :param kwargs:
             :return:
         """
-        url = '{0}{1}'.format(self.api_base_url, endpoint)
+        if self.token:
+            self.header["Authorization"] = "Bearer " + self.token
+            url = '{0}{1}'.format(self.api_base_url, endpoint)
 
-        if method == "get":
-            response = requests.request(method, url, headers=self.header, params=kwargs)
+            if method == "get":
+                response = requests.request(method, url, headers=self.header, params=kwargs)
+            else:
+                response = requests.request(method, url, headers=self.header, data=data, json=json)
+            return self.parse_response(response)
         else:
-            response = requests.request(method, url, headers=self.header, data=data, json=json)
-        return self.parse_response(response)
+            raise Exception("To make petitions the token is necessary")
 
     def _get(self, endpoint, data=None, **kwargs):
         return self.make_request('get', endpoint, data=data, **kwargs)
@@ -74,11 +79,35 @@ class Client:
         return response.json()
 
     def oauth_access(self, client_id, callback):
+        """
+            This method return the main url to begin the oauth flow
+            :param client_id:
+            :param callback:
+            :return:
+        """
         url = "https://signin.infusionsoft.com/app/oauth/authorize?client_id={0}&redirect_uri={1}&response_type={2}".format(
             client_id, callback, "code")
         return url
 
-    def refresh_token(self, client_id, client_secret, refresh_token):
+    def exchange_code(self, redirect_uri, code):
+        """
+            This method receive the code send in the first flow step, later make the petition to get the token
+            :param redirect_uri:
+            :param code:
+            :return:
+        """
+        data = {
+            'client_id': self.client_id,
+            'redirect_uri': redirect_uri,
+            'client_secret': self.client_secret,
+            'code': code,
+            'grant_type': 'authorization_code',
+        }
+        url = "https://api.infusionsoft.com/token"
+        response = requests.post(url, data=data)
+        return self.parse_response(response)
+
+    def refresh_token(self, refresh_token):
         """
             to refresh the token you must to give client_id, client_secret and refresh token
             :param client_id:
@@ -86,15 +115,24 @@ class Client:
             :param re_token:
             :return:
         """
-        if client_id is not None and client_secret is not None and refresh_token is not None:
+        if self.client_id is not None and self.client_secret is not None and refresh_token is not None:
             url = "https://api.infusionsoft.com/token"
-            authorization = '{0}:{1}'.format(client_id, client_secret)
+            authorization = '{0}:{1}'.format(self.client_id, self.client_secret)
             header = {'Authorization': 'Basic {0}'.format(b64encode(authorization.encode('UTF-8')).decode('UTF-8'))}
             args = {'grant_type': 'refresh_token', 'refresh_token': refresh_token}
             response = requests.post(url, headers=header, data=args)
             return self.parse_response(response)
         else:
             raise Exception("The attributes necessary to refresh the token were not obtained.")
+
+    def set_token(self, token):
+        """
+            Sets the Token for its use in this library.
+            :param token: A string with the Token.
+            :return:
+        """
+        if token != "":
+            self.token = token
 
     def get_data(self, endpoint, **kwargs):
         return self._get(endpoint, **kwargs)
@@ -124,9 +162,6 @@ class Client:
         """
             To get all the contacts you can just call the method, to filter use limit, order, offset.
             For other options see the documentation of the API
-            :param limit:
-            :param order:
-            :param offset:
             :return:
         """
         return self._get('contacts', **kwargs)
@@ -136,7 +171,7 @@ class Client:
             endpoint = 'contacts/{0}'.format(id)
             return self._get(endpoint, **kwargs)
         else:
-            raise Exception("El id es obligatorio")
+            raise Exception("The ID is necessary")
 
     def create_contact(self, **kwargs):
         """
@@ -154,7 +189,7 @@ class Client:
 
     def delete_contact(self, id):
         """
-            To delete a contact is obligatory send the id of the contact to delete
+            To delete a contact is obligatory send The ID of the contact to delete
             :param id:
             :return:
         """
@@ -162,11 +197,11 @@ class Client:
             endpoint = 'contacts/{0}'.format(id)
             return self._delete(endpoint)
         else:
-            raise Exception("El id es obligatorio")
+            raise Exception("The ID is necessary")
 
     def update_contact(self, id, **kwargs):
         """
-            To update a contact you must to send the id of the contact to update
+            To update a contact you must to send The ID of the contact to update
             For other options see the documentation of the API
             :param id:
             :param kwargs:
@@ -178,7 +213,7 @@ class Client:
             params.update(kwargs)
             return self._patch(endpoint, json=params)
         else:
-            raise Exception("The id is obligatory")
+            raise Exception("The ID is obligatory")
 
     def get_campaigns(self, **kwargs):
         """
@@ -202,7 +237,7 @@ class Client:
             endpoint = 'campaigns/{0}'.format(id)
             return self._get(endpoint, **kwargs)
         else:
-            raise Exception("El id es obligatorio")
+            raise Exception("The ID is necessary")
 
     def get_emails(self, **kwargs):
         """
@@ -243,7 +278,7 @@ class Client:
             endpoint = 'opportunities/{0}'.format(id)
             return self._get(endpoint, kwargs)
         else:
-            raise Exception("El id es obligatorio")
+            raise Exception("The ID is necessary")
 
     def create_opportunity(self, **kwargs):
         """
@@ -262,7 +297,7 @@ class Client:
 
     def update_opportunity(self, id, **kwargs):
         """
-            To update an opportunity is obligatory the id, the other fields you can see in the documentation
+            To update an opportunity is obligatory The ID, the other fields you can see in the documentation
             :param id:
             :param kwargs:
             :return:
@@ -273,7 +308,7 @@ class Client:
             params.update(kwargs)
             return self._patch(endpoint, json=params)
         else:
-            raise Exception("El id es obligatorio")
+            raise Exception("The ID is necessary")
 
     def get_products(self, **kwargs):
         return self._get('products/search', **kwargs)
@@ -283,7 +318,7 @@ class Client:
             endpoint = "products/{0}".format(id)
             return self._get(endpoint)
         else:
-            raise Exception("The id is necessary")
+            raise Exception("The ID is necessary")
 
     def get_tasks(self, **kwargs):
         return self._get('tasks', **kwargs)
@@ -309,21 +344,21 @@ class Client:
             params.update(kwargs)
             return self._patch(endpoint, json=params)
         else:
-            raise Exception("The id is obligatory")
+            raise Exception("The ID is obligatory")
 
     def retrieve_task(self, id):
         if id != "":
             endpoint = "tasks/{0}".format(id)
             return self._get(endpoint)
         else:
-            raise Exception("The id is necessary")
+            raise Exception("The ID is necessary")
 
     def replace_task(self, id, **kwargs):
         if id != "":
             endpoint = "tasks/{0}".format(id)
             return self._put(endpoint, **kwargs)
         else:
-            raise Exception("The id is necessary")
+            raise Exception("The ID is necessary")
 
     def get_orders(self, **kwargs):
         return self._get('orders', **kwargs)
@@ -333,7 +368,7 @@ class Client:
             endpoint = "tasks/{0}".format(id)
             return self._get(endpoint)
         else:
-            raise Exception("The id is necessary")
+            raise Exception("The ID is necessary")
 
     def get_hook_events(self):
         callback = "{0}/{1}".format("hooks", "event_keys")
@@ -347,14 +382,14 @@ class Client:
             callback = "{0}/{1}/{2}".format("hooks", id, "verify")
             return self._post(callback, data=None)
         else:
-            raise Exception("El id es obligatorio")
+            raise Exception("The ID is necessary")
 
     def create_hook_subscription(self, event, callback):
         if event is not None and callback is not None:
             args = {"eventKey": event, "hookUrl": callback}
             return self._post('hooks', json=args)
         else:
-            raise Exception("El hook necesita un evento y una url")
+            raise Exception("Hook needs event and endpoint")
 
     def update_hook_subscription(self, id, event, url):
         if id != "":
@@ -362,11 +397,11 @@ class Client:
             args = {"eventKey": event, "hookUrl": url}
             return self._post(callback, json=args)
         else:
-            raise Exception("El id es obligatorio")
+            raise Exception("The ID is necessary")
 
     def delete_hook_subscription(self, id):
         if id != "":
             callback = "{0}/{1}".format("hooks", id)
             return self._delete(callback)
         else:
-            raise Exception("El id es obligatorio")
+            raise Exception("The ID is necessary")
