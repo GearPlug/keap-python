@@ -78,7 +78,7 @@ class Client:
                     response.url, response.status_code, response.text))
         return response.json()
 
-    def oauth_access(self, client_id, callback):
+    def oauth_access(self, callback):
         """
             This method return the main url to begin the oauth flow
             :param client_id:
@@ -86,7 +86,7 @@ class Client:
             :return:
         """
         url = "https://signin.infusionsoft.com/app/oauth/authorize?client_id={0}&redirect_uri={1}&response_type={2}".format(
-            client_id, callback, "code")
+            self.client_id, callback, "code")
         return url
 
     def exchange_code(self, redirect_uri, code):
