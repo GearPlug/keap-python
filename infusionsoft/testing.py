@@ -8,10 +8,10 @@ this library works for the Infusionsoft REST API version 1
 """
 client_id = "kbj7nhv3b7yezsrxck2cc749"
 client_secret = "UMtN6PGPud"
-access_token = "p2de6mybxsbgs3xu393r7teh"
-refresh_token = "v4vvdcuqk7ddwajucjsfk7ra"
+access_token = "x2x35pf95s9eenz65fq58r83"
+refresh_token = "9qyw5spgzwsmtnc6mvh68ajw"
 callback = ""
-petition = Client(access_token)
+petition = Client(client_id=client_id, client_secret=client_secret, token=access_token)
 
 """
 OAUTH URL
@@ -24,7 +24,7 @@ here you will get the url to do the oauth petition, you have to send the client 
 REFRESH TOKEN
 here you can refresh the token, are obligatory the client id, client secret and the refresh token
 """
-# refresh_token = petition.refresh_token(client_id, client_secret, refresh_token)
+# refresh_token = petition.refresh_token(refresh_token)
 # print(refresh_token)
 
 """
@@ -34,6 +34,7 @@ Endpoint Examples: "contacts", "contactCustomFields", "campaigns", "opportunitie
 """
 # data = petition.get_data('contacts', order="id", order_direction="descending", limit=1)
 # print(data)
+# print(type(data))
 
 """
 CREATE DATA
@@ -43,6 +44,9 @@ Example:
     endpoint = "contacts"
     data = petition.create_data(endpoint, **data)
 """
+# data = {'email_addresses': [{'email': 'EMAIL@EMAIL.com', 'field': 'EMAIL1'}], 'given_name': 'MYNAME'}
+# create = petition.create_data("contacts", **data)
+# print(type(create))
 
 """
 UPDATE DATA
@@ -50,8 +54,13 @@ call the method update_data and send "endpoint", the id of the thing to update, 
 Example:
     data = {'email_addresses': [{'email': 'CHANGEEMAIL@EMAIL.com', 'field': 'EMAIL1'}], 'given_name': 'CHANGENAME'}
     endpoint = "contacts"
-    data = petition.update_data(endpoint, 100, **data)
+    data = petition.update_data(endpoint, 216, **data)
 """
+# data = {'email_addresses': [{'email': 'CHANGEEMAIL@EMAIL.com', 'field': 'EMAIL1'}], 'given_name': 'CHANGENAME'}
+# endpoint = "contacts"
+# update = petition.update_data(endpoint, 216, **data)
+# print(update)
+# print(type(update))
 
 """
 DELETE DATA
@@ -59,6 +68,9 @@ just call the method delete_data, send "endpoint" and the id of the thing to del
 Example:
     data = petition.delete_data(endpoint, 100)
 """
+# data = petition.delete_data("contacts", 216)
+# print(data)
+# print(type(data))
 
 """
 CONTACT TEST
@@ -123,7 +135,7 @@ here you can list the opportunities, can receive limit, order, and offset
 # list_opportunities = petition.get_opportunities()
 # print(list_opportunities)
 
-""" ***here you can list all t3jpyhrhu2r9ac6cw4uta7sf9he opportunities in pipeline, not receive anyshit"""
+""" ***here you can list all the opportunities in pipeline, not receive anyshit"""
 # list_all_opportunities = petition.get_opportunities_pipeline()
 # print(list_all_opportunities)
 
