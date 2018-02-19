@@ -11,7 +11,7 @@ client_secret = ""
 access_token = ""
 refresh_token = ""
 callback = ""
-petition = Client(client_id, client_secret, access_token)
+petition = Client(client_id=client_id, client_secret=client_secret, token=access_token)
 
 """
 OAUTH URL
@@ -41,7 +41,7 @@ call the method create_data and send "endpoint" and the data
 Example: 
     data = {'email_addresses': [{'email': 'EMAIL@EMAIL.com', 'field': 'EMAIL1'}], 'given_name': 'NAME'}
     endpoint = "contacts"
-    data = petition.create_data(endpoint, **data)
+    create = petition.create_data(endpoint, **data)
 """
 
 """
@@ -50,14 +50,14 @@ call the method update_data and send "endpoint", the id of the thing to update, 
 Example:
     data = {'email_addresses': [{'email': 'CHANGEEMAIL@EMAIL.com', 'field': 'EMAIL1'}], 'given_name': 'CHANGENAME'}
     endpoint = "contacts"
-    data = petition.update_data(endpoint, 100, **data)
+    update = petition.update_data(endpoint, 100, **data)
 """
 
 """
 DELETE DATA
 just call the method delete_data, send "endpoint" and the id of the thing to delete
 Example:
-    data = petition.delete_data(endpoint, 100)
+    delete = petition.delete_data(endpoint, 100)
 """
 
 """

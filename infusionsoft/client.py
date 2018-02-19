@@ -11,7 +11,7 @@ class Client:
     api_base_url = "https://api.infusionsoft.com/crm/rest/v1/"
     header = {"Accept": "application/json, */*", "content-type": "application/json"}
 
-    def __init__(self, client_id, client_secret, token=None):
+    def __init__(self, client_id=None, client_secret=None, token=None):
         self.client_id = client_id
         self.client_secret = client_secret
         self.token = token
@@ -85,9 +85,12 @@ class Client:
             :param callback:
             :return:
         """
-        url = "https://signin.infusionsoft.com/app/oauth/authorize?client_id={0}&redirect_uri={1}&response_type={2}".format(
-            self.client_id, callback, "code")
-        return url
+        if self.client_id is not None and callback is not None:
+            url = "https://signin.infusionsoft.com/app/oauth/authorize?client_id={0}&redirect_uri={1}&response_type={2}".format(
+                self.client_id, callback, "code")
+            return url
+        else:
+            raise Exception("The attributes necessary to get the url were not obtained.")
 
     def exchange_code(self, redirect_uri, code):
         """
@@ -96,16 +99,19 @@ class Client:
             :param code:
             :return:
         """
-        data = {
-            'client_id': self.client_id,
-            'redirect_uri': redirect_uri,
-            'client_secret': self.client_secret,
-            'code': code,
-            'grant_type': 'authorization_code',
-        }
-        url = "https://api.infusionsoft.com/token"
-        response = requests.post(url, data=data)
-        return self.parse_response(response)
+        if self.client_id is not None and self.client_secret is not None and redirect_uri is not None and code is not None:
+            data = {
+                'client_id': self.client_id,
+                'redirect_uri': redirect_uri,
+                'client_secret': self.client_secret,
+                'code': code,
+                'grant_type': 'authorization_code',
+            }
+            url = "https://api.infusionsoft.com/token"
+            response = requests.post(url, data=data)
+            return self.parse_response(response)
+        else:
+            raise Exception("The attributes necessary to exchange the code were not obtained.")
 
     def refresh_token(self, refresh_token):
         """
