@@ -14,7 +14,7 @@ client = Client('CLIENT_ID', 'CLIENT_SECRET', 'OPTIONAL - access_token')
 ```
 #### Get authorization url
 ```
-url = client..oauth_access("REDIRECT_URL")
+url = client.oauth_access("REDIRECT_URL")
 ```
 
 #### Exchange the code for an access token
