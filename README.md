@@ -4,7 +4,7 @@ InfusionSoft API wrapper for Infusionsoft written in Python.
 
 ## Installing
 ```
-git+git://github.com/GearPlug/infusionsoft-python.git
+pip install infusionsoft-python
 ```
 
 ## Usage
