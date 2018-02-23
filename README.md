@@ -242,7 +242,6 @@ delete_hook = petition.delete_hook_subscription('ID')
 
 ## Requirements
 - requests
-- base64 -- b64encode
 
 ## Tests
 ```
