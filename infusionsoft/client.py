@@ -86,8 +86,8 @@ class Client:
             :return:
         """
         if self.client_id is not None and callback is not None:
-            url = "https://signin.infusionsoft.com/app/oauth/authorize?client_id={0}&redirect_uri={1}&response_type={2}".format(
-                self.client_id, callback, "code")
+            url = "https://signin.infusionsoft.com/app/oauth/authorize?client_id={0}&redirect_uri={1}&response_type={2}&scope={3}".format(
+                self.client_id, callback, "code", "full")
             return url
         else:
             raise Exception("The attributes necessary to get the url were not obtained.")
