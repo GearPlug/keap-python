@@ -38,6 +38,7 @@ class Client:
             response = requests.request(method, url, headers=self.header, params=kwargs)
         else:
             response = requests.request(method, url, headers=self.header, data=data, json_data=json_data)
+            response = requests.request(method, url, headers=self.header, data=data, json=json_data)
         return self.parse_response(response)
 
 
