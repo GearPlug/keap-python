@@ -1,7 +1,7 @@
 """
     Documentation of the API: https://developer.infusionsoft.com/docs/rest/
 """
-
+import json
 import requests
 from base64 import b64encode
 from .errors import TokenError, AuthError, DataError, ConnectionError
@@ -37,9 +37,8 @@ class Client:
         if method == "get":
             response = requests.request(method, url, headers=self.header, params=kwargs)
         else:
-            response = requests.request(method, url, headers=self.header, data=data, json_data=json_data)
+            response = requests.request(method, url, headers=self.header, data=data, json=json_data)
         return self.parse_response(response)
-
 
     def _get(self, endpoint, data=None, **kwargs):
         return self.make_request('get', endpoint, data=data, **kwargs)
@@ -459,3 +458,63 @@ class Client:
 
         callback = "{0}/{1}".format("hooks", id)
         return self._delete(callback)
+
+    def list_tags(self, **kwargs):
+        """
+        Get a list of available tags.
+        :param kwargs:
+        :return: {
+            'tags': [
+                {
+                    'id': 1,
+                    'name': 'Tag Name',
+                    'category': {
+                        'id': 1,
+                        'name': 'Category Name',
+                        'description': 'Category description.'
+                    }
+                }
+            ]
+        }
+        """
+
+        return self._get('tags', **kwargs)
+
+    def apply_tag(self, tag_id: int, contact_ids, **kwargs):
+        """
+        Apply a tag to one or multiple contacts.
+        :param tag_id: Integer tag ID.
+        :param contact_ids: Either one contact ID or a list of contact IDs.
+        :param kwargs:
+        :return:
+        """
+        if not tag_id:
+            raise DataError("tag_id is required.")
+
+        if not isinstance(contact_ids, (tuple, list, set)) or not contact_ids:
+            if contact_ids:
+                contact_ids = [contact_ids]
+            else:
+                raise DataError("contact_ids has to be a list or a single contact id.")
+
+        data = {
+            "ids": contact_ids
+        }
+        endpoint = 'tags/{tagId}/contacts'.format(tagId=tag_id)
+        return self._post(endpoint, data=json.dumps(data))
+
+    def remove_tag(self, tag_id, contact_id, **kwargs):
+        """
+        Remove a tag from a contact.
+        :param tag_id: Integer tag ID.
+        :param contact_id: Integer contact ID.
+        :param kwargs:
+        :return:
+        """
+        if not tag_id:
+            raise DataError("tag_id is required.")
+        if not contact_id:
+            raise DataError("contact_id is required.")
+
+        endpoint = 'tags/{tagId}/contacts/{contactId}'.format(tagId=tag_id, contactId=contact_id)
+        return self._delete(endpoint, **kwargs)
