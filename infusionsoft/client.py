@@ -1,5 +1,4 @@
 import requests
-import json
 from base64 import b64encode
 
 """
@@ -16,9 +15,10 @@ class Client:
         self.client_secret = client_secret
         self.token = token
 
-    def make_request(self, method, endpoint, data=None, json=None, **kwargs):
+    def make_request(self, method, endpoint, data=None, json_data=None, **kwargs):
         """
-            this method do the request petition, receive the different methods (post, delete, patch, get) that the api allow
+            This method do the request petition,
+            receive the different methods (post, delete, patch, get) that the api allows.
             :param method:
             :param endpoint:
             :param data:
@@ -32,7 +32,7 @@ class Client:
             if method == "get":
                 response = requests.request(method, url, headers=self.header, params=kwargs)
             else:
-                response = requests.request(method, url, headers=self.header, data=data, json=json)
+                response = requests.request(method, url, headers=self.header, data=data, json_data=json_data)
             return self.parse_response(response)
         else:
             raise Exception("To make petitions the token is necessary")
@@ -40,21 +40,21 @@ class Client:
     def _get(self, endpoint, data=None, **kwargs):
         return self.make_request('get', endpoint, data=data, **kwargs)
 
-    def _post(self, endpoint, data=None, json=None, **kwargs):
-        return self.make_request('post', endpoint, data=data, json=json, **kwargs)
+    def _post(self, endpoint, data=None, json_data=None, **kwargs):
+        return self.make_request('post', endpoint, data=data, json_data=json_data, **kwargs)
 
     def _delete(self, endpoint, **kwargs):
         return self.make_request('delete', endpoint, **kwargs)
 
-    def _patch(self, endpoint, data=None, json=None, **kwargs):
-        return self.make_request('patch', endpoint, data=data, json=json, **kwargs)
+    def _patch(self, endpoint, data=None, json_data=None, **kwargs):
+        return self.make_request('patch', endpoint, data=data, json_data=json_data, **kwargs)
 
-    def _put(self, endpoint, json=None, **kwargs):
-        return self.make_request('put', endpoint, json=json, **kwargs)
+    def _put(self, endpoint, json_data=None, **kwargs):
+        return self.make_request('put', endpoint, json_data=json_data, **kwargs)
 
     def parse_response(self, response):
         """
-            This method get the response request and returns json data or raise exceptions
+            This method get the response request and returns json_data data or raise exceptions
             :param response:
             :return:
         """
@@ -62,20 +62,38 @@ class Client:
             return True
         elif response.status_code == 400:
             raise Exception(
-                "The URL {0} retrieved an {1} error. Please check your request body and try again.\nRaw message: {2}".format(
-                    response.url, response.status_code, response.text))
+                "The URL {0} retrieved an {1} error. "
+                "Please check your request body and try again.\nRaw message: {2}".format(
+                    response.url,
+                    response.status_code,
+                    response.text
+                )
+            )
         elif response.status_code == 401:
             raise Exception(
-                "The URL {0} retrieved and {1} error. Please check your credentials, make sure you have permission to perform this action and try again.".format(
-                    response.url, response.status_code))
+                "The URL {0} retrieved and {1} error. Please check your credentials, "
+                "make sure you have permission to perform this action and try again.".format(
+                    response.url,
+                    response.status_code
+                )
+            )
         elif response.status_code == 403:
             raise Exception(
-                "The URL {0} retrieved and {1} error. Please check your credentials, make sure you have permission to perform this action and try again.".format(
-                    response.url, response.status_code))
+                "The URL {0} retrieved and {1} error. Please check your credentials, "
+                "make sure you have permission to perform this action and try again.".format(
+                    response.url,
+                    response.status_code
+                )
+            )
         elif response.status_code == 404:
             raise Exception(
-                "The URL {0} retrieved an {1} error. Please check the URL and try again.\nRaw message: {2}".format(
-                    response.url, response.status_code, response.text))
+                "The URL {0} retrieved an {1} error. Please check the URL and try again.\n"
+                "Raw message: {2}".format(
+                    response.url,
+                    response.status_code,
+                    response.text
+                )
+            )
         return response.json()
 
     def oauth_access(self, callback):
@@ -86,8 +104,13 @@ class Client:
             :return:
         """
         if self.client_id is not None and callback is not None:
-            url = "https://signin.infusionsoft.com/app/oauth/authorize?client_id={0}&redirect_uri={1}&response_type={2}&scope={3}".format(
-                self.client_id, callback, "code", "full")
+            url = "https://signin.infusionsoft.com/app/oauth/authorize?client_id={0}" \
+                  "&redirect_uri={1}&response_type={2}&scope={3}".format(
+                self.client_id,
+                callback,
+                "code",
+                "full"
+            )
             return url
         else:
             raise Exception("The attributes necessary to get the url were not obtained.")
@@ -99,7 +122,10 @@ class Client:
             :param code:
             :return:
         """
-        if self.client_id is not None and self.client_secret is not None and redirect_uri is not None and code is not None:
+        if self.client_id is not None\
+                and self.client_secret is not None\
+                and redirect_uri is not None\
+                and code is not None:
             data = {
                 'client_id': self.client_id,
                 'redirect_uri': redirect_uri,
@@ -147,14 +173,14 @@ class Client:
         if kwargs is not None:
             params = {}
             params.update(kwargs)
-            return self._post(endpoint, json=params)
+            return self._post(endpoint, json_data=params)
 
     def update_data(self, endpoint, data_id, **kwargs):
         params = {}
         if data_id != "":
             url = '{0}/{1}'.format(endpoint, data_id)
             params.update(kwargs)
-            return self._patch(url, json=params)
+            return self._patch(url, json_data=params)
 
     def delete_data(self, endpoint, data_id):
         if data_id != "":
@@ -181,7 +207,8 @@ class Client:
 
     def create_contact(self, **kwargs):
         """
-            For create a contact is obligatory to fill the email or the phone number, I also recommend to fill the given_name="YOUR NAME"
+            For create a contact is obligatory to fill the email or the phone number.
+            I also recommend to fill the given_name="YOUR NAME"
             :param email:
             :param phone_number:
             :param kwargs:
@@ -190,7 +217,7 @@ class Client:
         if kwargs is not None:
             params = {}
             params.update(kwargs)
-            return self._post('contacts', json=params)
+            return self._post('contacts', json_data=params)
         raise Exception("To create a contact is necessary a valid name and email")
 
     def delete_contact(self, id):
@@ -217,7 +244,7 @@ class Client:
         if id != "":
             endpoint = 'contacts/{0}'.format(id)
             params.update(kwargs)
-            return self._patch(endpoint, json=params)
+            return self._patch(endpoint, json_data=params)
         else:
             raise Exception("The ID is obligatory")
 
@@ -247,7 +274,7 @@ class Client:
 
     def get_emails(self, **kwargs):
         """
-            To get the emails just call the method, if you need filter options see the documentation of the API
+            To get the emails just call the method, if you need filter options see the documentation of the API.
             :param limit:
             :param offset:
             :param kwargs:
@@ -257,7 +284,8 @@ class Client:
 
     def get_opportunities(self, **kwargs):
         """
-            To get the opportunities you can just call the method, also you can filter, see the options in the documentation API
+            To get the opportunities you can just call the method.
+            Also you can filter, see the options in the documentation API.
             :param limit:
             :param order:
             :param offset:
@@ -288,8 +316,9 @@ class Client:
 
     def create_opportunity(self, **kwargs):
         """
-            To create an opportunity is obligatory to send a title of the opportunity, the contact who have the opportunity, and stage
-            For more information see the documentation of the API
+            To create an opportunity is obligatory to send a title of the opportunity,
+            the contact who have the opportunity, and stage.
+            For more information see the documentation of the API.
             :param opportunity_title:
             :param contact:
             :param stage:
@@ -299,11 +328,11 @@ class Client:
         if kwargs is not None:
             params = {}
             params.update(kwargs)
-            return self._post('opportunities', json=params)
+            return self._post('opportunities', json_data=params)
 
     def update_opportunity(self, id, **kwargs):
         """
-            To update an opportunity is obligatory The ID, the other fields you can see in the documentation
+            To update an opportunity is obligatory The ID, the other fields you can see in the documentation.
             :param id:
             :param kwargs:
             :return:
@@ -312,7 +341,7 @@ class Client:
         if id != "":
             endpoint = 'opportunities/{0}'.format(id)
             params.update(kwargs)
-            return self._patch(endpoint, json=params)
+            return self._patch(endpoint, json_data=params)
         else:
             raise Exception("The ID is necessary")
 
@@ -333,7 +362,7 @@ class Client:
         if kwargs is not None:
             params = {}
             params.update(kwargs)
-            return self._post('tasks', json=params)
+            return self._post('tasks', json_data=params)
         raise Exception("To create a task is necessary a title and a due_date")
 
     def delete_task(self, id):
@@ -348,7 +377,7 @@ class Client:
         if id != "":
             endpoint = 'tasks/{0}'.format(id)
             params.update(kwargs)
-            return self._patch(endpoint, json=params)
+            return self._patch(endpoint, json_data=params)
         else:
             raise Exception("The ID is obligatory")
 
@@ -393,7 +422,7 @@ class Client:
     def create_hook_subscription(self, event, callback):
         if event is not None and callback is not None:
             args = {"eventKey": event, "hookUrl": callback}
-            return self._post('hooks', json=args)
+            return self._post('hooks', json_data=args)
         else:
             raise Exception("Hook needs event and endpoint")
 
@@ -401,7 +430,7 @@ class Client:
         if id != "":
             callback = "{0}/{1}".format("hooks", id)
             args = {"eventKey": event, "hookUrl": url}
-            return self._post(callback, json=args)
+            return self._post(callback, json_data=args)
         else:
             raise Exception("The ID is necessary")
 
