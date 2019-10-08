@@ -7,13 +7,14 @@ def read(fname):
 
 
 setup(name='infusionsoft-python',
-      version='0.1.2',
+      version='0.1.3',
       description='API wrapper for Infusionsoft written in Python',
       long_description=read('README.md'),
+      long_description_content_type="text/markdown",
       url='https://github.com/GearPlug/infusionsoft-python',
       author='Yordy Gelvez',
       author_email='yordy.gelvez@gmail.com',
-      license='GPL',
+      license='MIT',
       packages=['infusionsoft'],
       install_requires=[
           'requests',
