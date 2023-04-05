@@ -419,7 +419,7 @@ class Client:
         if not id:
             raise DataError("The ID is required.")
 
-        endpoint = "tasks/{0}".format(id)
+        endpoint = "orders/{0}".format(id)
         return self._get(endpoint)
 
     def get_hook_events(self):
