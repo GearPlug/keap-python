@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "infusionsoft-python"
-version = "0.1.5"
+version = "0.1.6"
 description = "API wrapper for Infusionsoft written in Python"
 authors = ["Miguel Ferrer <ingferrermiguel@gmail.com>"]
 license = "MIT"
